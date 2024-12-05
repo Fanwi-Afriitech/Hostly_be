@@ -26,7 +26,7 @@ const roomSchema= mongoose.Schema({
     },
     phonenumber:{
         type:Number,
-        required: true
+        required: false
     },
     imageurls:{
         type: [String], // This will be an array of strings to hold multiple image URLs

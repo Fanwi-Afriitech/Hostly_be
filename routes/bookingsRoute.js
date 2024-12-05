@@ -3,11 +3,16 @@ const router = express.Router();
 const Room = require("../models/room");
 const Booking = require('../models/booking')
 const { v4: uuidv4 } = require('uuid');
-const stripe = require('stripe')('sk_test_51Nt6DvFFr1q0QPEdVKjl4sZG3bwOlhpG57tbvYKGrb4UzeOCRDwcLKMZzs5OlUsxXvL0q1sBHoMNtp8jWVfDi3uA00ST1Ab0uG')
+// const stripe = require('stripe')('sk_test_51Nt6DvFFr1q0QPEdVKjl4sZG3bwOlhpG57tbvYKGrb4UzeOCRDwcLKMZzs5OlUsxXvL0q1sBHoMNtp8jWVfDi3uA00ST1Ab0uG')
+const stripe = require('stripe')('sk_test_tR3PYbcVNZZ796tH88S4VQ2u')
 
 
 // Route to get all rooms
 router.post('/bookroom', async (req, res) => {
+    if (!room || !userid || !fromdate || !todate || !totalamount || !totaldays || !token) {
+        return res.status(400).json({ message: 'Missing required fields in the request.' });
+    }
+    console.log('Booking Request Payload:', req.body);    
     const {
         room,
         userid,
@@ -36,7 +41,11 @@ router.post('/bookroom', async (req, res) => {
             }, {
             idempotencyKey: uuidv4()
         }
+        
         )
+        if (!payment || payment.status !== 'succeeded') {
+            throw new Error('Payment failed. Please try again.');
+        }
         if (payment) {
 
         
